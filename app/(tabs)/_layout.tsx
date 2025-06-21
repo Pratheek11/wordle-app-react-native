@@ -1,45 +1,151 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Feather } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import React from "react";
+import { useColorScheme, View } from "react-native";
+import Animated, { FadeInLeft, FadeInRight, FadeOutLeft, FadeOutRight } from "react-native-reanimated";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+const _layout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarShowLabel: false,
+        tabBarItemStyle: {
+          width: "100%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        tabBarStyle: {
+          backgroundColor: useColorScheme() === "dark" ? "#000" : "#fff",
+          borderRadius: 15,
+          marginHorizontal: 50,
+          marginBottom: 36,
+          position: "absolute",
+          height: 50,
+          overflow: "hidden",
+          elevation: 1,
+        },
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Home",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View
+                style={{
+                  height: 50,
+                  width: 100,
+                  marginTop: 5,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {
+                  focused ? 
+                  <Animated.View
+                    layout={FadeInRight.springify().damping(80).stiffness(200)}
+                    exiting={FadeOutRight.springify().damping(80).stiffness(200)}
+                    style={{
+                    height: 40,
+                    width: 100,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#000',
+                    borderRadius: 15
+                  }}
+                  >
+                    <Feather name="home" size={24} color="#fff" />
+                    <Animated.Text
+                      entering={FadeInRight.springify()
+                        .damping(80)
+                        .stiffness(200)}
+                      exiting={FadeOutRight.springify()
+                        .damping(80)
+                        .stiffness(200)}
+                      style={{
+                        color: "#fff",
+                      }}
+                    >
+                      Home
+                    </Animated.Text>
+                  </Animated.View>
+                  :
+                  <>
+                    <Feather name="home" size={24} color="#000" />
+                  </>
+                }
+              </View>
+            );
+          },
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="profile"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "Profile",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{
+                    height: 50,
+                    width: 100,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                 {
+                  focused ? 
+                  <Animated.View
+                    layout={FadeInLeft.springify().damping(80).stiffness(200)}
+                    exiting={FadeOutLeft.springify().damping(80).stiffness(200)}
+                    style={{
+                    height: 40,
+                    width: 100,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#000',
+                    borderRadius: 15
+                  }}
+                  >
+                    <Feather name="user" size={24} color="#fff" />
+                    <Animated.Text
+                      entering={FadeInRight.springify()
+                        .damping(80)
+                        .stiffness(200)}
+                      exiting={FadeOutRight.springify()
+                        .damping(80)
+                        .stiffness(200)}
+                      style={{
+                        color: "#fff",
+                      }}
+                    >
+                      Profile
+                    </Animated.Text>
+                  </Animated.View>
+                  :
+                  <>
+                    <Feather name="user" size={24} color="#000" />
+                  </>
+                }
+                </View>
+              )
+          },
         }}
       />
     </Tabs>
   );
-}
+};
+
+export default _layout;
