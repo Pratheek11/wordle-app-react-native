@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -21,7 +21,7 @@ const Coins = () => {
         borderRadius: appConstants.borderRadius,
       }}
     >
-      <Text>Coins : <Animated.Text entering={FadeInDown.springify().damping(80).stiffness(200)} >{coins}</Animated.Text></Text>
+      <Text>Coins : <Animated.Text entering={FadeInDown.springify().damping(80).stiffness(200)} >{coins} <FontAwesome6 name="coins" size={12} color="black" /></Animated.Text></Text>
       <TouchableOpacity onPress={() => router.push("/components/spinModal")}>
         <Ionicons name="add-circle-outline" size={16} color="black" />
       </TouchableOpacity>

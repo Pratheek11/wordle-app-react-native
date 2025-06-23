@@ -1,15 +1,27 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRootNavigationState, useRouter } from 'expo-router';
 import React from 'react';
-import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
+import gameInfo from '../../assets/staticData/gameInfo.json';
 import { appConstants } from "../colors";
 import Coins from '../components/coins';
-import GameInfo from '../components/gameInfo';
 
 const index = () => {
   const router = useRouter();
-  const [infoModal, setInfoModal] = React.useState(false);
+  const navigationState = useRootNavigationState();
+
+  React.useEffect(() => {
+  if (!navigationState?.key) return;
+  
+  const user = null; // or pull from AsyncStorage, context, etc.
+
+  if (!user) {
+    setTimeout(() => {
+      // router.replace('/components/onBoardProfile');
+    }, 0);
+  }
+  }, [navigationState?.key]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -26,18 +38,10 @@ const index = () => {
               padding: 10,
               elevation: 2,
             }}
-            onPress={() => setInfoModal(true)}
+            onPress={() => router.push({pathname: '/components/gameInfo', params: {data: JSON.stringify(gameInfo)}})}
           >
             <Ionicons name="information-circle-outline" size={24} color="black" />
           </TouchableOpacity>
-          <Modal
-            visible={infoModal}
-            animationType="slide"
-            presentationStyle="pageSheet"
-            onRequestClose={() => setInfoModal(false)}
-            >
-              <GameInfo setInfoModal={setInfoModal}/>
-          </Modal>
           <TouchableOpacity
             style={{
               padding: 10,
@@ -48,7 +52,7 @@ const index = () => {
               justifyContent: 'center',
               elevation: 2,
             }}
-            onPress={() => router.push('/game')}
+            onPress={() => router.push('/game/wordleGame')}
           >
             <Text style={{fontSize: 24, fontWeight: 'bold', letterSpacing: 5}}>PLAY</Text>
           </TouchableOpacity>

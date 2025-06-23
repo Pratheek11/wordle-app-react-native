@@ -2,7 +2,12 @@ import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { useColorScheme, View } from "react-native";
-import Animated, { FadeInLeft, FadeInRight, FadeOutLeft, FadeOutRight } from "react-native-reanimated";
+import Animated, {
+  FadeInLeft,
+  FadeInRight,
+  FadeOutLeft,
+  FadeOutRight,
+} from "react-native-reanimated";
 
 const _layout = () => {
   return (
@@ -40,28 +45,42 @@ const _layout = () => {
                   height: 50,
                   width: 100,
                   marginTop: 5,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                {
-                  focused ? 
+                {focused ? (
                   <Animated.View
                     layout={FadeInRight.springify().damping(80).stiffness(200)}
-                    exiting={FadeOutRight.springify().damping(80).stiffness(200)}
+                    exiting={FadeOutRight.springify()
+                      .damping(80)
+                      .stiffness(200)}
                     style={{
-                    height: 40,
-                    width: 100,
-                    marginTop: 5,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#000',
-                    borderRadius: 15
-                  }}
+                      height: 40,
+                      width: 100,
+                      marginTop: 5,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#000",
+                      borderRadius: 15,
+                    }}
                   >
                     <Feather name="home" size={24} color="#fff" />
+                  </Animated.View>
+                ) : (
+                  <View
+                    style={{
+                      height: 40,
+                      width: 100,
+                      marginTop: 5,
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Feather name="home" size={20} color="#000" />
                     <Animated.Text
                       entering={FadeInRight.springify()
                         .damping(80)
@@ -70,17 +89,13 @@ const _layout = () => {
                         .damping(80)
                         .stiffness(200)}
                       style={{
-                        color: "#fff",
+                        color: "#000",
                       }}
                     >
                       Home
                     </Animated.Text>
-                  </Animated.View>
-                  :
-                  <>
-                    <Feather name="home" size={24} color="#000" />
-                  </>
-                }
+                  </View>
+                )}
               </View>
             );
           },
@@ -92,34 +107,46 @@ const _layout = () => {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{
-                    height: 50,
-                    width: 100,
-                    marginTop: 5,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                 {
-                  focused ? 
+            return (
+              <View
+                style={{
+                  height: 50,
+                  width: 100,
+                  marginTop: 5,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {focused ? (
                   <Animated.View
                     layout={FadeInLeft.springify().damping(80).stiffness(200)}
                     exiting={FadeOutLeft.springify().damping(80).stiffness(200)}
                     style={{
-                    height: 40,
-                    width: 100,
-                    marginTop: 5,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#000',
-                    borderRadius: 15
-                  }}
+                      height: 40,
+                      width: 100,
+                      marginTop: 5,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#000",
+                      borderRadius: 15,
+                    }}
                   >
                     <Feather name="user" size={24} color="#fff" />
+                  </Animated.View>
+                ) : (
+                  <View
+                    style={{
+                      height: 40,
+                      width: 100,
+                      marginTop: 5,
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Feather name="user" size={20} color="#000" />
                     <Animated.Text
                       entering={FadeInRight.springify()
                         .damping(80)
@@ -128,19 +155,15 @@ const _layout = () => {
                         .damping(80)
                         .stiffness(200)}
                       style={{
-                        color: "#fff",
+                        color: "#000",
                       }}
                     >
                       Profile
                     </Animated.Text>
-                  </Animated.View>
-                  :
-                  <>
-                    <Feather name="user" size={24} color="#000" />
-                  </>
-                }
-                </View>
-              )
+                  </View>
+                )}
+              </View>
+            );
           },
         }}
       />
