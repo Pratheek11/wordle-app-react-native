@@ -1,0 +1,14 @@
+{
+    "title": "Wordle",
+    "description": "A word puzzle game where players guess a five-letter word within five attempts.",
+    "images": [
+        "assets/images/gameInfo/gameInfo1.png",
+        "assets/images/gameInfo/gameInfo2.png",
+        "assets/images/gameInfo/gameInfo3.png"
+    ],
+    "rules": [
+        "Player have five attempts to guess the correct five-letter word.",
+        "After each guess, letters will be highlighted to indicate if they are in the correct position (green), in the word but in the wrong position (yellow), or not in the word at all (gray).",
+        "The game ends when the player guesses the word correctly or runs out of attempts."
+    ]
+}

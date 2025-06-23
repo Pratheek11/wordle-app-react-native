@@ -1,23 +1,86 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Coins from '../components/coins'
+import { Feather, FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Coins from "../components/coins";
 
 const profile = () => {
+  const router = useRouter();
+  const [user, setUser] = React.useState({
+    name: "",
+    userName: "",
+    age: "",
+    gender: "",
+  });
+
   return (
-    <View style={{ flex: 1}}>
-      <View style={{ marginTop: useSafeAreaInsets().top, padding: 10, justifyContent: 'center', alignItems: 'flex-end'}}>
-        <Coins/>
+    <View style={{ flex: 1 }}>
+      <View
+        style={{
+          marginTop: useSafeAreaInsets().top,
+          padding: 10,
+          justifyContent: "center",
+          alignItems: "flex-end",
+        }}
+      >
+        <Coins />
       </View>
-      <View>
-        <Text>
-          This is the profile screen
-        </Text>
-      </View>
+      <ScrollView>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            width: "90%",
+            marginHorizontal: 'auto',
+            backgroundColor: "#fff",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 15,
+            padding: 5,
+          }}
+        >
+          <View style={{flexDirection: 'row', width: '80%', margin: 5, alignItems: 'center', justifyContent: 'space-between'}}>
+            <FontAwesome name="user-circle-o" size={40} />
+            <TouchableOpacity 
+              onPress={() => router.push({pathname: '/components/onBoardProfile', params: { user : JSON.stringify(user)}})}
+            >
+              <Feather name="edit-2" size={20} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.fieldName}>Name:</Text>
+            <TextInput value={user.name} editable={false} />
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.fieldName}>Username:</Text>
+            <TextInput value={user.userName} editable={false} />
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.fieldName}>Age:</Text>
+            <TextInput value={user.age} editable={false} />
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.fieldName}>Gender:</Text>
+            <TextInput value={user.gender} editable={false} />
+          </View>
+        </View>
+      </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default profile
+export default profile;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    padding: 5,
+    margin: 5,
+    borderRadius: 15,
+    width: "45%",
+    backgroundColor: '#f0f0f0'
+  },
+  fieldName: {
+    color: 'grey'
+  }
+});
