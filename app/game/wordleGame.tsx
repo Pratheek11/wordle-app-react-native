@@ -22,7 +22,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
+import { useDispatch, useSelector } from "react-redux";
 import Coins from "../components/coins";
+import { removeCoins, setCoins } from "../redux/slices/coinSlice";
+import { RootState } from "../redux/store";
+import { storeCoinValue } from "../utils/dbUtils/userUtil";
 
 const keys = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -32,6 +36,9 @@ const keys = [
 
 const index = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const coins = useSelector((state: RootState) => (state.coins.total));
+  const user = useSelector((state: RootState) => (state.user));
   const [currentWord, setCurrentWord] = React.useState<string>("CAKES");
   const [currentGuessIndex, setCurrentGuessIndex] = React.useState<number>(0);
   const [guessWords, setGuessWords] = React.useState<string[]>([
@@ -52,15 +59,20 @@ const index = () => {
     falseKey: [],
   });
   const [winner, setWinner] = React.useState(false);
+  const [earnedCoins, setEarnedCoins] = React.useState<number>(0);
 
   React.useEffect(() => {
+    getGuessWord();
+    return () => {};
+  }, []);
+
+  const getGuessWord = () => {
     axios
       .get("https://random-word-api.herokuapp.com/word?length=5")
       .then((response) => {
         const resp: string = response.data[0];
         alert(`Game word is: ${resp.toUpperCase()}`);
-        // setCurrentWord(resp.toUpperCase());
-        setCurrentWord("CANER");
+        setCurrentWord(resp.toUpperCase());
       })
       .catch((error) => {
         if (error.includes("503")) {
@@ -68,16 +80,15 @@ const index = () => {
         } else {
           alert("Error fetching game word:");
         }
-        router.back();
+        router.push('/');
       });
-    return () => {};
-  }, []);
+  }
 
   const handleBackgroundColor = (symbol: string) => {
     if (symbol.toUpperCase() === "T") {
       return "#5bc783";
     } else if (symbol.toUpperCase() === "P") {
-      return "#ffee93";
+      return "#FBC503";
     } else if (symbol.toUpperCase() === "F") {
       return "grey";
     }
@@ -107,11 +118,20 @@ const index = () => {
     });
     wordsBackg[currentGuessIndex] = feedback;
     setWordsBg(wordsBackg);
-    setCurrentGuessIndex((currentGuessIndex) => currentGuessIndex + 1);
+    const index = currentGuessIndex + 1;
+    setCurrentGuessIndex(index);
     if (feedback === "TTTTT") {
-      setWinner(true);
+      handleWinnerPrice(index);
     }
   };
+
+  const handleWinnerPrice = (index: number) => {
+    var price = (guessWords.length - index) * 1;
+    setEarnedCoins(price);
+    const totalCoins = coins + price;
+    dispatch(setCoins(totalCoins));
+    setWinner(true);
+  }
 
   const handleKeyClick = (key: string) => {
     const newGuessWords = [...guessWords];
@@ -130,31 +150,77 @@ const index = () => {
   const handleKeyBgColor = (key: string) => {
     if (keyBg.trueKey.includes(key)) return "#5bc783";
     if (keyBg.falseKey.includes(key)) return "grey";
-    if (keyBg.presentKey.includes(key)) return "#ffee93";
+    if (keyBg.presentKey.includes(key)) return "#FBC503";
     return "#ddd";
   };
 
   const handleWordHint = () => {
+    if(coins < 100) {
+      Toast.show({
+        type: 'error',
+        text1: 'Letter Hint',
+        text2: 'Not enough coins!',
+        position: 'top',
+        autoHide: false
+      });
+      return;
+    }
+    handleRemoveCoins(100);
     Toast.show({
       type: 'info',
       text1: 'Letter Hint',
       text2: 'It is the forth letter',
-      position: 'bottom',
+      position: 'top',
       autoHide: false
     });
   }
 
   const handleRemoveWordsHint = () => {
+    if(coins < 50) {
+      Toast.show({
+        type: 'error',
+        text1: 'Remove letters',
+        text2: 'Not enough coins!',
+        position: 'top',
+        autoHide: false
+      });
+      return;
+    }
+    handleRemoveCoins(50);
     Toast.show({
       type: 'info',
-      text1: 'Removed letters',
+      text1: 'Remove letters',
       text2: 'These letters have been removed',
-      position: 'bottom',
+      position: 'top',
     });
+  }
+
+  const handleRemoveCoins = (val: number) => {
+    dispatch(removeCoins(val));
+    const newCoins = coins - val;
+    setTimeout(() => {
+      storeCoinValue(user, newCoins);
+    }, 0)
   }
 
   const handleGameReset = () => {
     setWinner(false);
+    setCurrentWord("");
+    getGuessWord();
+    setCurrentGuessIndex(0);
+    setGuessWords([
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]);
+    setWordsBg(["", "", "", "", ""]);
+    setKeyBg({
+      trueKey: [],
+      presentKey: [],
+      falseKey: [],
+    });
   }
 
   return (
@@ -166,7 +232,9 @@ const index = () => {
         justifyContent: "center",
       }}
     >
-      <Toast />
+      <Toast
+        topOffset={useSafeAreaInsets().top}
+      />
       <View
         style={{
           position: "absolute",
@@ -292,13 +360,70 @@ const index = () => {
             exiting={FadeOut.duration(500)}
             style={styles.overlay}
           >
-            <Text style={styles.winnerText}>🎉 You Won! 🎉</Text>
+            <Text style={styles.winnerText}>🎉 Guessed Right! 🎉</Text>
+            <View style={{gap: 5,}}>
+              <Text style={styles.details}>Chances Left - {guessWords.length - currentGuessIndex} * 1 <FontAwesome6 name="coins" size={12} color="#fff" /> = {earnedCoins} <FontAwesome6 name="coins" size={12} color="#fff" /></Text>
+              {/* <Text style={styles.details}>Guessed Under 2min - {} <FontAwesome6 name="coins" size={12} color="#fff" /> </Text> */}
+              <Text style={styles.details}>Total Coins - {coins - earnedCoins} + {earnedCoins} = {coins} <FontAwesome6 name="coins" size={12} color="#fff" /></Text>
+            </View>
             <TouchableOpacity
-              style={styles.key}
+              style={{
+                backgroundColor: '#007BFF',
+                padding: 10,
+                borderRadius: 15,
+                width: 100,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
               onPress={() => handleGameReset()}
             >
-              <Text style={styles.keyText}>Next</Text>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: '#fff'}}>Next</Text>
             </TouchableOpacity>
+          </Animated.View>
+        </View>
+      )}
+      {!winner && (currentGuessIndex >= guessWords.length) && (
+        <View style={StyleSheet.absoluteFillObject}>
+          <Animated.View
+            entering={FadeIn.duration(500)}
+            exiting={FadeOut.duration(500)}
+            style={styles.overlay}
+          >
+            <Text style={styles.winnerText}>☹️ Couldn't Guess! ☹️</Text>
+            <View style={{gap: 5,}}>
+              <Text style={styles.details}>No Chances Left!</Text>
+            </View>
+            <View style={{flexDirection: 'row', gap: 10}}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#E27429',
+                  padding: 10,
+                  borderRadius: 15,
+                  width: 100,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onPress={() => handleGameReset()}
+              >
+                <Text style={{fontSize: 14, fontWeight: 'bold', color: '#fff', textAlign: 'center'}}>
+                  Retry {"      "}
+                  100 <FontAwesome6 name="coins" size={10} color="#fff" />
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#007BFF',
+                  padding: 10,
+                  borderRadius: 15,
+                  width: 100,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onPress={() => handleGameReset()}
+              >
+                <Text style={{fontSize: 14, fontWeight: 'bold', color: '#fff'}}>Next</Text>
+              </TouchableOpacity>
+            </View>
           </Animated.View>
         </View>
       )}
@@ -355,6 +480,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
+    gap: 20,
     zIndex: 999,
   },
   winnerText: {
@@ -363,4 +489,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  details: {
+    color: '#fff'
+  }
 });

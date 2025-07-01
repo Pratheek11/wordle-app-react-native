@@ -3,16 +3,13 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 import Coins from "../components/coins";
+import { RootState } from "../redux/store";
 
 const profile = () => {
   const router = useRouter();
-  const [user, setUser] = React.useState({
-    name: "",
-    userName: "",
-    age: "",
-    gender: "",
-  });
+  const user = useSelector((state: RootState) => state.user);
 
   return (
     <View style={{ flex: 1 }}>
@@ -54,11 +51,11 @@ const profile = () => {
           </View>
           <View style={styles.container}>
             <Text style={styles.fieldName}>Username:</Text>
-            <TextInput value={user.userName} editable={false} />
+            <TextInput value={user.username} editable={false} />
           </View>
           <View style={styles.container}>
             <Text style={styles.fieldName}>Age:</Text>
-            <TextInput value={user.age} editable={false} />
+            <TextInput value={user.age + ""} editable={false} />
           </View>
           <View style={styles.container}>
             <Text style={styles.fieldName}>Gender:</Text>

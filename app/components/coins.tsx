@@ -3,10 +3,12 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 import { appConstants } from "../colors";
+import { RootState } from "../redux/store";
 
 const Coins = () => {
-  const [coins, setCoins] = React.useState(0);
+  const coins = useSelector((state: RootState) => state.coins.total);
   const router = useRouter();
 
   return (
@@ -19,6 +21,7 @@ const Coins = () => {
         borderWidth: 1,
         padding: 10,
         borderRadius: appConstants.borderRadius,
+        zIndex: -1
       }}
     >
       <Text>Coins : <Animated.Text entering={FadeInDown.springify().damping(80).stiffness(200)} >{coins} <FontAwesome6 name="coins" size={12} color="black" /></Animated.Text></Text>

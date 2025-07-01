@@ -4,14 +4,14 @@ type Gender = "Male" | "Female" | "Other";
 
 export interface UserState {
   name: string;
-  userName: string;
+  username: string;
   age: number;
   gender: Gender;
 }
 
 const initialState: UserState = {
   name: "",
-  userName: "",
+  username: "",
   age: 0,
   gender: "Other"
 };
@@ -22,7 +22,7 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<UserState>) => {
       state.name = action.payload.name;
-      state.userName = action.payload.userName;
+      state.username = action.payload.username;
       state.age = action.payload.age;
       state.gender = action.payload.gender;
     },

@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { useColorScheme, View } from "react-native";
+import { View } from "react-native";
 import Animated, {
   FadeInLeft,
   FadeInRight,
@@ -18,13 +18,11 @@ const _layout = () => {
         screenOptions={{
           tabBarShowLabel: false,
           tabBarItemStyle: {
-            width: "100%",
-            height: "100%",
             justifyContent: "center",
             alignItems: "center",
           },
           tabBarStyle: {
-            backgroundColor: useColorScheme() === "dark" ? "#000" : "#fff",
+            backgroundColor: "#fff",
             borderRadius: 15,
             marginHorizontal: 50,
             marginBottom: 36,
@@ -63,7 +61,7 @@ const _layout = () => {
                         .stiffness(200)}
                       style={{
                         height: 40,
-                        width: 100,
+                        paddingHorizontal: 30,
                         marginTop: 5,
                         flexDirection: "row",
                         alignItems: "center",
@@ -131,7 +129,7 @@ const _layout = () => {
                         .stiffness(200)}
                       style={{
                         height: 40,
-                        width: 100,
+                        paddingHorizontal: 30,
                         marginTop: 5,
                         flexDirection: "row",
                         alignItems: "center",

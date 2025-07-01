@@ -1,27 +1,41 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRootNavigationState, useRouter } from 'expo-router';
+import { SplashScreen, useRootNavigationState, useRouter } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInRight } from 'react-native-reanimated';
+import { useDispatch, useSelector } from 'react-redux';
 import gameInfo from '../../assets/staticData/gameInfo.json';
 import { appConstants } from "../colors";
 import Coins from '../components/coins';
+import { setCoins } from '../redux/slices/coinSlice';
+import { setUser } from '../redux/slices/userSlice';
+import { RootState } from '../redux/store';
+import { getCoins, getUserDetails, initUser } from '../utils/dbUtils/userUtil';
+
+SplashScreen.preventAutoHideAsync();
 
 const index = () => {
   const router = useRouter();
   const navigationState = useRootNavigationState();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
 
   React.useEffect(() => {
-  if (!navigationState?.key) return;
-  
-  const user = null; // or pull from AsyncStorage, context, etc.
-
-  if (!user) {
-    setTimeout(() => {
-      // router.replace('/components/onBoardProfile');
-    }, 0);
-  }
-  }, [navigationState?.key]);
+    const getUser = async () => {
+      await initUser();
+      let userDetails = await getUserDetails();
+      let coins = await getCoins();
+      SplashScreen.hide();
+      if(!userDetails){
+        router.push('/components/onBoardProfile');
+        return;
+      } else {
+        dispatch(setUser(userDetails));
+        if(coins) dispatch(setCoins(coins));
+      }
+    }
+    getUser();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
