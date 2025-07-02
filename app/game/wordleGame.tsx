@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Coins from "../components/coins";
 import { removeCoins, setCoins } from "../redux/slices/coinSlice";
 import { RootState } from "../redux/store";
+import { Endpoints } from "../utils/apiUtils/endpoints";
 import { storeCoinValue } from "../utils/dbUtils/userUtil";
 
 const keys = [
@@ -68,7 +69,7 @@ const index = () => {
 
   const getGuessWord = () => {
     axios
-      .get("https://random-word-api.herokuapp.com/word?length=5")
+      .get(Endpoints.getWord)
       .then((response) => {
         const resp: string = response.data[0];
         alert(`Game word is: ${resp.toUpperCase()}`);
@@ -82,6 +83,18 @@ const index = () => {
         }
         router.push('/');
       });
+  }
+
+   const handleCheckValidWord = () : boolean => {
+    if(guessWords[currentGuessIndex].length < 5)  return false;
+    axios.get(Endpoints.dictonary + guessWords[currentGuessIndex])
+      .then((response) => {
+        return false;
+      })
+      .catch((error) => {
+        return true;
+      });
+    return false;
   }
 
   const handleBackgroundColor = (symbol: string) => {
@@ -341,6 +354,7 @@ const index = () => {
         <View style={styles.row}>
           <TouchableOpacity
             style={[styles.key, { flex: 1.5 }]}
+            disabled={handleCheckValidWord()}
             onPress={() => handleSubmit()}
           >
             <Text style={styles.keyText}>ENTER</Text>
