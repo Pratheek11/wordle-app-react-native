@@ -1,21 +1,28 @@
 import { Stack } from "expo-router";
+import React from "react";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+import { initUser } from "./utils/dbUtils/userUtil";
 
 export default function RootLayout() {
+
+  React.useState(() => {
+    initUser();
+  });
+
   return (
     <Provider store={store}>
       <Stack>
         <Stack.Screen
-          name="components/onBoardProfile/index"
+          name="(tabs)"
           options={{
-            title: "Onboard Profile",
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="(tabs)"
+          name="components/onBoardProfile/index"
           options={{
+            title: "Onboard Profile",
             headerShown: false,
           }}
         />

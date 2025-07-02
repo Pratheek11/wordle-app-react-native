@@ -8,13 +8,19 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useDispatch, useSelector } from "react-redux";
+import { addCoins } from "../redux/slices/coinSlice";
+import { RootState } from "../redux/store";
+import { storeCoinValue } from "../utils/dbUtils/userUtil";
 
 const SpinModal = () => {
   const router = useRouter();
-  const [coins, setCoins] = React.useState(0);
   const [spinValue, setSpinValue] = React.useState("$$$");
   const [disabled, setDisabled] = React.useState(false);
   const ty1 = useSharedValue(0);
+  const coins = useSelector((state: RootState) => state.coins.total);
+  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
 
   const animateDigits = () => {
     const springCfg = { damping: 5, stiffness: 100 };
@@ -35,14 +41,16 @@ const SpinModal = () => {
     setSpinValue("$$$");
     const generatedValue = Math.round(Math.random() * 10);
     animateDigits();
-    setTimeout(() => {
+    setTimeout(async () => {
       setDisabled(false);
       if (generatedValue > 9 && generatedValue < 100) {
         setSpinValue("0" + generatedValue);
       } else {
         setSpinValue("00" + generatedValue);
       }
-      setCoins((previousVal) => previousVal + generatedValue);
+      const newCoins = coins + generatedValue;
+      dispatch(addCoins(generatedValue));
+      storeCoinValue(user, newCoins);
     }, 1000);
   };
 
