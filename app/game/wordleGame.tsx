@@ -72,7 +72,6 @@ const index = () => {
       .get(Endpoints.getWord)
       .then((response) => {
         const resp: string = response.data[0];
-        alert(`Game word is: ${resp.toUpperCase()}`);
         setCurrentWord(resp.toUpperCase());
       })
       .catch((error) => {
@@ -179,13 +178,27 @@ const index = () => {
       return;
     }
     handleRemoveCoins(100);
-    Toast.show({
-      type: 'info',
-      text1: 'Letter Hint',
-      text2: 'It is the forth letter',
-      position: 'top',
-      autoHide: false
+    let ind = -1;
+    let letter = "";
+    currentWord.split("").forEach((lett, index) => {
+      if(guessWords[currentGuessIndex].includes(lett)) return;
+      if(ind === -1) {
+        ind = index;
+        letter = lett;
+      }
     });
+    if(ind != -1) {
+      let key = { ...keyBg}
+      key.trueKey.push(letter);
+      setKeyBg(key);
+      Toast.show({
+        type: 'info',
+        text1: 'Letter Hint',
+        text2: `It is the ${ind} position letter ${letter}`,
+        position: 'top',
+        autoHide: false
+      });
+    }
   }
 
   const handleRemoveWordsHint = () => {
@@ -200,12 +213,30 @@ const index = () => {
       return;
     }
     handleRemoveCoins(50);
-    Toast.show({
-      type: 'info',
-      text1: 'Remove letters',
-      text2: 'These letters have been removed',
-      position: 'top',
+    let ind = 0;
+    let letter = "";
+    keys.forEach((lett, index) => {
+      lett.forEach((l, i) => {
+        if(guessWords[currentGuessIndex].includes(l)) return;
+        if(ind < 3) {
+          ind++;
+          letter += " " + l;
+        }
+      });
     });
+    if(ind == 3) {
+      let remveKeys = letter.split(" ");
+      let key = { ...keyBg}
+      key.falseKey.push(...remveKeys);
+      setKeyBg(key);
+      Toast.show({
+        type: 'info',
+        text1: 'Letter Hint',
+        text2: `Removed letters are ${letter}`,
+        position: 'top',
+        autoHide: false
+      });
+    }
   }
 
   const handleRemoveCoins = (val: number) => {
